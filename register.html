@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB ZONE | إنشاء حساب لاعب جديد</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="bg-particles"></div>
+
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="avatar-container">
+                <div class="cyber-robot" id="cyberRobot">
+                    <div class="robot-eyes">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="index.html" class="logo-link"><h2 class="logo" style="margin-bottom: 25px;">RGB <span>ZONE</span></h2></a>
+            
+            <div id="statusMsg" style="text-align: center; font-size: 14px; margin-bottom: 15px; font-weight: bold; min-height: 20px;"></div>
+
+            <form id="registerForm">
+                <div class="auth-group">
+                    <input type="text" id="regUser" placeholder="اسم الحساب (ID)" required>
+                    <i class="fas fa-user-gamepad"></i>
+                </div>
+                <div class="auth-group">
+                    <input type="email" id="regEmail" placeholder="البريد الإلكتروني" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="auth-group">
+                    <input type="password" id="pass1" class="pass-field" placeholder="كلمة المرور" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="auth-group">
+                    <input type="password" id="pass2" class="pass-field" placeholder="تأكيد كلمة المرور" required>
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <button type="submit" class="auth-btn">إنشاء الحساب فوراً <i class="fas fa-user-plus"></i></button>
+                <div class="auth-links"><span style="color: #ccc;">لديك حساب؟</span> <a href="login.html" style="color: var(--neon-cyan);">تسجيل دخول</a></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

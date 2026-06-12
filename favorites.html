@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB ZONE | قائمة المفضلة</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .fav-section { padding: 140px 8% 60px; min-height: 80vh; }
+        .empty-msg { text-align: center; padding: 50px 20px; color: #888; font-size: 18px; display: none; }
+        .empty-msg i { font-size: 50px; color: var(--neon-pink); margin-bottom: 20px; display: block; text-shadow: 0 0 15px var(--neon-pink); }
+        .empty-msg .btn-back { display: inline-block; margin-top: 20px; padding: 10px 25px; background: rgba(255,255,255,0.05); border: 1px solid var(--neon-cyan); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; transition: 0.3s; }
+        .empty-msg .btn-back:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-particles"></div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo-link"><div class="logo">RGB <span>ZONE</span></div></a>
+        <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="index.html#products-section">الأقسام</a></li>
+            <li><a href="cart.html">السلة</a></li>
+        </ul>
+        <div class="nav-icons">
+            <a href="favorites.html" style="color: var(--neon-pink); filter: drop-shadow(0 0 5px var(--neon-pink));" title="المفضلة"><i class="fas fa-heart"></i></a>
+            <a href="cart.html" style="color: inherit;"><i class="fas fa-shopping-cart cart-icon"><span class="badge" id="cartBadge">0</span></i></a>
+            <a href="login.html" style="color: inherit;"><i class="fas fa-user-circle user-profile-icon"></i></a>
+        </div>
+    </nav>
+
+    <section class="fav-section">
+        <h2 class="section-title">قائمتي المفضلة ❤️</h2>
+        
+        <div class="empty-msg" id="emptyMsg">
+            <i class="far fa-heart-broken"></i>
+           
+            <br>
+            <a href="index.html" class="btn-back">تصفح المنتجات الآن</a>
+        </div>
+
+        <div class="products-grid" id="favGrid">
+            </div>
+    </section>
+
+    <div class="product-modal" id="productModal">
+        <div class="modal-container">
+            <span class="close-modal" id="closeModalBtn"><i class="fas fa-times"></i></span>
+            <div class="modal-gallery">
+                <div class="main-modal-img">
+                    <img id="modalMainImg" src="" alt="Product Detail">
+                </div>
+            </div>
+            <div class="modal-details">
+                <h2 id="modalTitle">اسم المنتج</h2>
+                <div class="interactive-rating" id="modalRating">
+                    <i class="far fa-star" data-value="5"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="1"></i>
+                </div>
+                <p class="modal-desc" id="modalDescription">الوصف التفصيلي الحقيقي...</p>
+                <div class="price-row">
+                    <span class="price" id="modalPrice">$0.00</span>
+                    <button class="cta-btn" id="modalAddToCartBtn" style="padding: 12px 25px; font-size: 16px;">إضافة العربة <i class="fas fa-shopping-basket"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        
+        function displayFavorites() {
+            const favGrid = document.getElementById('favGrid');
+            const emptyMsg = document.getElementById('emptyMsg');
+            if(!favGrid) return;
+
+           
+            const allProducts = [
+                { id: "1", title: "ماوس احترافي وايرلس 26K DPI ثنائي المود", price: "$79.99", img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500", desc: "ماوس قيمنق احترافي لاسلكي فائق الخفة، يأتي بمستشعر مخصص بدقة 26,000 DPI وسرعة استجابة هائلة خالية من التأخير. يدعم الاتصال اللاسلكي ثنائي المود ويوفر عمر بطارية طويل جداً للاعبين المحترفين مع إضاءة RGB نيون خلابة أسفل الهيكل المستقر.", tag: "خصم 20%" },
+                { id: "2", title: "كيبورد ميكانيكي 60% سويتشات حمراء نيون", price: "$120.00", img: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500", desc: "كيبورد ميكانيكي مدمج بنسبة 60% مصمم خصيصاً لتوفير مساحة واسعة لتحركات الماوس أثناء اللعب. مجهز بسويتشات حمراء خطية (Linear Red Switches) سريعة جداً وهادئة، مع أغطية مفاتيح PBT متينة للغاية وإضاءة RGB كاملة قابلة للتعديل والبرمجة.", tag: "" },
+                { id: "3", title: "سماعة محيطية 7.1 مع مايك عازل للضوضاء محترف", price: "$95.00", img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500", desc: "سماعة ألعاب محيطية فائقة الدقة بنظام صوتي 7.1 لتحديد وتتبع خطى الأعداء وأماكن إطلاق النيران بدقة لا متناهية. تأتي بـ ميكروفون عازل تماماً للضوضاء قابل للفصل، ووسائد أذن مريحة مصنوعة من رغوة الذاكرة (Memory Foam) لجلسات اللعب الطويلة دون إرهاق.", tag: "" }
+            ];
+
+          
+            let currentFavs = JSON.parse(localStorage.getItem('rgb_favorites')) || [];
+            favGrid.innerHTML = "";
+
+            if(currentFavs.length === 0) {
+                emptyMsg.style.display = "block";
+                return;
+            } else {
+                emptyMsg.style.display = "none";
+            }
+
+          
+            allProducts.forEach(prod => {
+                if(currentFavs.includes(prod.id)) {
+                    let tagHTML = prod.tag ? `<span class="tag hot">${prod.tag}</span>` : '';
+                    let cardHTML = `
+                        <div class="product-card" data-id="${prod.id}" data-desc="${prod.desc}" data-gallery="${prod.img}">
+                            ${tagHTML}
+                            <button class="fav-btn active" title="إزالة من المفضلة"><i class="fas fa-heart" style="color: #ff0043"></i></button>
+                            <div class="product-img">
+                                <img src="${prod.img}" alt="${prod.title}">
+                            </div>
+                            <div class="product-info">
+                                <h3>${prod.title}</h3>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                                <div class="price-row">
+                                    <span class="price">${prod.price}</span>
+                                    <button class="add-to-cart"><i class="fas fa-cart-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    favGrid.innerHTML += cardHTML;
+                }
+            });
+        }
+
+        
+        document.addEventListener('DOMContentLoaded', displayFavorites);
+
+        
+        window.addEventListener('click', function() {
+            setTimeout(displayFavorites, 100);
+        });
+    </script>
+</body>
+</html>

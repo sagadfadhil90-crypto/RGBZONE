@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB ZONE | أقسام المتجر</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .categories-section {
+            padding: 120px 8% 60px;
+        }
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .category-box {
+            position: relative;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .category-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .category-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10, 10, 12, 0.9) 20%, rgba(0,0,0,0.2));
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            transition: 0.3s;
+        }
+        .category-overlay i {
+            font-size: 35px;
+            color: var(--neon-cyan);
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+        .category-overlay h3 {
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+        }
+        .category-overlay p {
+            color: #aaa;
+            font-size: 14px;
+            margin-top: 5px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.3s;
+        }
+        /* حركات التفاعل الحماسية */
+        .category-box:hover img {
+            transform: scale(1.1) rotate(1deg);
+        }
+        .category-box:hover .category-overlay {
+            background: linear-gradient(to top, rgba(255, 0, 127, 0.4) 10%, rgba(0,0,0,0.4));
+        }
+        .category-box:hover .category-overlay i {
+            color: #fff;
+            transform: scale(1.2);
+            text-shadow: 0 0 15px var(--neon-pink);
+        }
+        .category-box:hover .category-overlay p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-particles"></div>
+
+    <section class="categories-section">
+        <h2 class="section-title">اختر عتادك وحسب القسم</h2>
+        
+        <div class="categories-grid">
+            <div class="category-box">
+                <img src="https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?w=500" alt="Screens">
+                <div class="category-overlay">
+                    <i class="fas fa-desktop"></i>
+                    <h3>شاشات القيمنق</h3>
+                    <p>شاشات 240Hz وأكثر بزمن استجابة 1ms</p>
+                </div>
+            </div>
+            <div class="category-box">
+                <img src="https://images.unsplash.com/photo-1599669454699-248893623440?w=500" alt="Keyboards">
+                <div class="category-overlay">
+                    <i class="fas fa-keyboard"></i>
+                    <h3>كيبوردات وماوسات</h3>
+                    <p>أزرار ميكانيكية مخصصة وسريعة جداً</p>
+                </div>
+            </div>
+            <div class="category-box">
+                <img src="https://images.unsplash.com/photo-1606220532402-13110093177c?w=500" alt="Audio">
+                <div class="category-overlay">
+                    <i class="fas fa-headset"></i>
+                    <h3>الصوتيات والمحاكاة</h3>
+                    <p>سماعات محيطية لتحديد مكان الخصم بدقة</p>
+                </div>
+            </div>
+            <div class="category-box">
+                <img src="https://images.unsplash.com/photo-1598550476439-6847785fce6e?w=500" alt="Chairs">
+                <div class="category-overlay">
+                    <i class="fas fa-chair"></i>
+                    <h3>كراسي وطاولات RGB</h3>
+                    <p>جلسة مريحة لساعات اللعب الطويلة دون تعب</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

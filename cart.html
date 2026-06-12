@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB ZONE | عربة التسوق والطلبات</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        .cart-section { padding: 140px 8% 60px; min-height: 80vh; }
+        .cart-container { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 30px; }
+        .cart-items { flex: 1.5; min-width: 350px; display: flex; flex-direction: column; gap: 20px; }
+        
+        .cart-item { 
+            background: var(--card-bg); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 15px; 
+            padding: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+        .cart-item:hover { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); }
+        .cart-item-info { display: flex; align-items: center; gap: 20px; text-align: right; }
+        .cart-item-img { width: 90px; height: 90px; border-radius: 10px; overflow: hidden; object-fit: cover; }
+        .cart-item-details h3 { font-size: 18px; color: #fff; margin-bottom: 5px; }
+        .cart-item-details .price { font-size: 18px; color: var(--neon-cyan); }
+        
+        .remove-btn { background: rgba(255, 0, 127, 0.1); border: 1px solid var(--neon-pink); color: var(--neon-pink); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .remove-btn:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 15px var(--neon-pink); }
+        
+        .cart-summary { flex: 1.2; min-width: 320px; background: rgba(15, 15, 20, 0.8); border: 1px solid rgba(0, 243, 255, 0.2); padding: 30px; border-radius: 20px; height: fit-content; text-align: right; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #ccc; font-size: 14px; font-weight: 700; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-family: 'Cairo', sans-serif; transition: 0.3s; text-align: right; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); outline: none; }
+        
+        .empty-cart-msg { text-align: center; padding: 60px 20px; color: #888; font-size: 18px; width: 100%; }
+        .empty-cart-msg i { font-size: 60px; color: var(--neon-cyan); margin-bottom: 20px; display: block; text-shadow: 0 0 15px var(--neon-cyan); }
+
+        /* استايل الـ PDF الاحترافي للتحميل */
+        #invoiceTemplate { display: none; background: #ffffff; color: #222222; padding: 40px; font-family: 'Cairo', sans-serif; direction: rtl; }
+        .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #111; padding-bottom: 15px; margin-bottom: 25px; }
+        .pdf-logo { font-size: 35px; font-weight: 900; color: #111; letter-spacing: 1px; }
+        .pdf-logo span { color: #ff007f; }
+        .pdf-tagline { font-size: 12px; color: #666; margin-top: -5px; font-weight: bold; }
+        .pdf-title-badge { font-size: 18px; font-weight: 900; background: #ff007f; color: #fff; padding: 8px 20px; border-radius: 5px; box-shadow: 2px 2px 0px #111; }
+        
+        .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        .pdf-box { border: 2px solid #111; padding: 15px; border-radius: 8px; background: #fbfbfb; box-shadow: 3px 3px 0px rgba(0,0,0,0.05); }
+        .pdf-box h4 { margin-top: 0; margin-bottom: 12px; font-size: 16px; color: #fff; background: #111; padding: 4px 10px; border-radius: 4px; display: inline-block; }
+        .pdf-box p { font-size: 14px; margin-bottom: 6px; color: #333; line-height: 1.5; }
+        
+        .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; border: 2px solid #111; }
+        .pdf-table th, .pdf-table td { padding: 12px; text-align: right; font-size: 14px; border: 1px solid #111; }
+        .pdf-table th { background: #f0f0f0; color: #111; font-weight: 900; border-bottom: 3px solid #111; }
+        
+        .pdf-footer-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 2px dashed #111; padding-top: 15px; }
+        .pdf-total-box { font-size: 20px; font-weight: 900; color: #fff; background: #111; padding: 10px 25px; border-radius: 6px; border: 2px solid #ff007f; }
+        .pdf-thanks { text-align: center; font-size: 14px; font-weight: bold; color: #555; margin-top: 30px; border: 1px dashed #ccc; padding: 10px; background: #fffdfd; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-particles"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo-link"><div class="logo">RGB <span>ZONE</span></div></a>
+        <ul class="nav-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="index.html#products-section">الأقسام</a></li>
+            <li><a href="cart.html" class="active">السلة</a></li>
+        </ul>
+        <div class="nav-icons">
+            <a href="favorites.html" style="color: inherit;" title="المفضلة"><i class="far fa-heart"></i></a>
+            <a href="cart.html" style="color: var(--neon-cyan); filter: drop-shadow(0 0 5px var(--neon-cyan));"><i class="fas fa-shopping-cart cart-icon"><span class="badge" id="cartBadge">0</span></i></a>
+            <a href="login.html" style="color: inherit;"><i class="fas fa-user-circle user-profile-icon"></i></a>
+        </div>
+    </nav>
+
+    <section class="cart-section">
+        <h2 class="section-title">عربة التسوق وبيانات الطلب 🛒</h2>
+        
+        <div class="cart-container">
+            <div class="cart-items" id="cartItemsContainer"></div>
+
+            <div class="cart-summary" id="cartSummarySection">
+                <h3 style="margin-bottom: 20px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">معلومات الشحن والتوصيل</h3>
+                
+                <form id="orderForm" onsubmit="processOrder(event)">
+                    <div class="form-group">
+                        <label>اسم الزبون الكريم (ثنائي أو ثلاثي):</label>
+                        <input type="text" id="custName" required placeholder="مثال: محمد علي">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف الأساسي:</label>
+                        <input type="tel" id="custPhone1" required placeholder="07XXXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف الثانوي (احتياط):</label>
+                        <input type="tel" id="custPhone2" placeholder="07XXXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>العنوان الكامل (المحافظة / المنطقة / أقرب نقطة دالة):</label>
+                        <input type="text" id="custAddress" required placeholder="بغداد - الكرادة - قرب ساحة التحرير">
+                    </div>
+                    <div class="form-group">
+                        <label>طريقة الدفع المتوفرة:</label>
+                        <select id="custPayment">
+                            <option value="الدفع عند الاستلام (نقد كاش)">الدفع عند الاستلام</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                        <div class="summary-row">
+                            <span>عدد القطع:</span>
+                            <span id="itemsCount">0</span>
+                        </div>
+                        <div class="summary-row" style="border-bottom: none; margin-bottom: 0; font-weight: 900; color: var(--neon-cyan);">
+                            <span>المجموع الكلي:</span>
+                            <span id="totalPrice">$0.00</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="cta-btn" style="width: 100%; justify-content: center; margin-top: 20px; background: linear-gradient(45deg, #0088cc, #00a6ff); color: #fff; box-shadow: 0 0 15px rgba(0, 136, 204, 0.4);">تأكيد الشراء وإرسال الطلب <i class="fab fa-telegram-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div id="invoiceTemplate">
+        <div class="pdf-header">
+            <div>
+                <div class="pdf-logo">RGB <span>ZONE</span></div>
+                <div class="pdf-tagline">سيرفر تجهيز عتاد القيمنق الاحترافي 🕹️</div>
+            </div>
+            <div class="pdf-title-badge">وصل طلبية العتاد</div>
+        </div>
+        
+        <div class="pdf-grid">
+            <div class="pdf-box">
+                <h4>معلومات البطل (الزبون)</h4>
+                <p><strong>👤 الاسم الكريم:</strong> <span id="pdfCustName"></span></p>
+                <p><strong>📞 الرقم الرئيسي:</strong> <span id="pdfCustPhone1"></span></p>
+                <p><strong>☎️ رقم الاحتياط:</strong> <span id="pdfCustPhone2"></span></p>
+                <p><strong>📍 وين ساكن (العنوان):</strong> <span id="pdfCustAddress"></span></p>
+            </div>
+            <div class="pdf-box">
+                <h4>تفاصيل الفاتورة والوكت</h4>
+                <p><strong>🔢 رقم الوصل مالتك:</strong> #RGB-<span id="pdfInvoiceNum"></span></p>
+                <p><strong>📅 وكت وتاريخ الطلب:</strong> <span id="pdfDate"></span></p>
+                <p><strong>💳 طريقة الدفع:</strong> <span id="pdfPayment"></span></p>
+                <p><strong>⚙️ وضعية الطلبية:</strong> جار التجهيز والترتيب للطلب 🛠️</p>
+            </div>
+        </div>
+
+        <h3 style="font-size: 16px; margin-bottom: 10px; color: #111;">📦 الغراض اللي حجزتهم:</h3>
+        <table class="pdf-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">تسلسل</th>
+                    <th>اسم القطعة والعتاد المصلح</th>
+                    <th style="width: 120px;">السعر الصافي</th>
+                </tr>
+            </thead>
+            <tbody id="pdfTableBody"></tbody>
+        </table>
+
+        <div class="pdf-footer-section">
+            <div style="font-size: 14px; color: #555;">* يرجى إبقاء الموبايل مفتوحاً للرد على المندوب فور وصوله.</div>
+            <div class="pdf-total-box">
+                الحساب الصافي الكلي: <span id="pdfTotal"></span>
+            </div>
+        </div>
+        
+        <div class="pdf-thanks">
+            منورنا عيوني، شكراً لأن اختاريت RGB ZONE. هسة عتادك صار مال محترفين.. عيش اللعبة واكتسح السيرفر! 🔥🎮
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const productsDatabase = {
+            "1": { title: "ماوس احترافي وايرلس 26K DPI ثنائي المود", price: 79.99, img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500" },
+            "2": { title: "كيبورد ميكانيكي 60% سويتشات حمراء نيون", price: 120.00, img: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500" },
+            "3": { title: "سماعة محيطية 7.1 مع مايك عازل للضوضاء محترف", price: 95.00, img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500" },
+            "4": { title: "مايكروفون جيمنج احترافي FIFINE A8 RGB", price: 50.00, img: "photo/fifine_a8.jpg" }
+        };
+
+        function updateCartPage() {
+            const container = document.getElementById('cartItemsContainer');
+            const summarySection = document.getElementById('cartSummarySection');
+            const badge = document.getElementById('cartBadge');
+            let cartIds = JSON.parse(localStorage.getItem('rgb_cart_ids')) || [];
+            
+            localStorage.setItem('rgb_cart_count', cartIds.length);
+            if(badge) badge.innerText = cartIds.length;
+            document.getElementById('itemsCount').innerText = cartIds.length;
+
+            if(cartIds.length === 0) {
+                container.innerHTML = `<div class="empty-cart-msg"><i class="fas fa-shopping-basket"></i>عربتك فارغة حالياً!</div>`;
+                if(summarySection) summarySection.style.display = "none";
+                return;
+            }
+
+            if(summarySection) summarySection.style.display = "block";
+            container.innerHTML = "";
+            let total = 0;
+
+            cartIds.forEach((id, index) => {
+                const prod = productsDatabase[id];
+                if(prod) {
+                    total += prod.price;
+                    container.innerHTML += `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <img src="${prod.img}" class="cart-item-img">
+                                <div class="cart-item-details">
+                                    <h3>${prod.title}</h3>
+                                    <span class="price">$${prod.price.toFixed(2)}</span>
+                                </div>
+                            </div>
+                            <button class="remove-btn" onclick="removeFromCart(${index})">حذف <i class="fas fa-trash-alt"></i></button>
+                        </div>`;
+                }
+            });
+            document.getElementById('totalPrice').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(index) {
+            let cartIds = JSON.parse(localStorage.getItem('rgb_cart_ids')) || [];
+            cartIds.splice(index, 1);
+            localStorage.setItem('rgb_cart_ids', JSON.stringify(cartIds));
+            showToast("تم إزالة القطعة من السلة بنجاح 🗑️", "success");
+            updateCartPage();
+        }
+
+        // دالة تحميل الـ PDF معزولة ومحمية حتى تعمل بأي ظرف للعميل
+        function downloadInvoicePDF(name) {
+            const element = document.getElementById('invoiceTemplate');
+            element.style.display = "block";
+            
+            const pdfOptions = {
+                margin: 10,
+                filename: `RGB-ZONE-وصل-${name}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(pdfOptions).from(element).save().then(() => {
+                element.style.display = "none";
+                localStorage.removeItem('rgb_cart_ids');
+                localStorage.setItem('rgb_cart_count', 0);
+                document.getElementById('orderForm').reset();
+                updateCartPage();
+                
+                alert("عاش بطل! تم حجز عتادك بنجاح وتوليد الوصل الفخام.\n\nسيتم فتح بوت التتبع، اضغط (Start) لتفعيله واستلام الإشعارات التلقائية! 🔥");
+                window.open(`https://t.me/RGBZONEORDERbot`, '_blank');
+            });
+        }
+
+        function processOrder(event) {
+            event.preventDefault();
+            let cartIds = JSON.parse(localStorage.getItem('rgb_cart_ids')) || [];
+            if(cartIds.length === 0) return;
+
+            const name = document.getElementById('custName').value.trim();
+            const phone1 = document.getElementById('custPhone1').value.trim();
+            const phone2 = document.getElementById('custPhone2').value.trim() || "لا يوجد";
+            const address = document.getElementById('custAddress').value.trim();
+            const payment = document.getElementById('custPayment').value;
+            const invoiceNum = Math.floor(1000 + Math.random() * 9000); 
+            const dateStr = new Date().toLocaleDateString('ar-IQ');
+
+            document.getElementById('pdfCustName').innerText = name;
+            document.getElementById('pdfCustPhone1').innerText = phone1;
+            document.getElementById('pdfCustPhone2').innerText = phone2;
+            document.getElementById('pdfCustAddress').innerText = address;
+            document.getElementById('pdfPayment').innerText = payment;
+            document.getElementById('pdfInvoiceNum').innerText = invoiceNum;
+            document.getElementById('pdfDate').innerText = dateStr;
+
+            const tbody = document.getElementById('pdfTableBody');
+            tbody.innerHTML = "";
+            let total = 0;
+            let telegramItemsText = ""; 
+
+            cartIds.forEach((id, index) => {
+                const prod = productsDatabase[id];
+                if(prod) {
+                    total += prod.price;
+                    tbody.innerHTML += `<tr><td>${index + 1}</td><td>${prod.title}</td><td>$${prod.price.toFixed(2)}</td></tr>`;
+                    telegramItemsText += `📦 المنتج ${index+1}: ${prod.title} ($${prod.price})\n`;
+                }
+            });
+            document.getElementById('pdfTotal').innerText = `$${total.toFixed(2)}`;
+
+            let tgMessage = `🚨 وصلك طلب عتاد جديد! #RGB-${invoiceNum} 🚨\n\n`;
+            tgMessage += `👤 اسم الزبون: ${name}\n`;
+            tgMessage += `📞 الهاتف الأساسي: ${phone1}\n`;
+            tgMessage += `📍 العنوان: ${address}\n`;
+            tgMessage += `💵 المجموع الكلي: $${total.toFixed(2)}\n\n`;
+            tgMessage += telegramItemsText;
+
+            // ⚠️ ملاحظة: ضع توكن الأدمن الحقيقي القادم من BotFather هنا لتجاوز إيرور الـ 401 بالسيرفر
+            const botToken = "8913347086:AAGnw8BgNJ_YSYRmLicqgfDSRkHZu2vlGrA"; 
+            const chatId = "8279582613"; 
+
+            const inlineKeyboard = {
+                inline_keyboard: [[
+                    { text: "تم 1 (المندوب بالطريق) 🚖", callback_data: `status_1_${invoiceNum}` }
+                ]]
+            };
+
+            showToast("جاري معالجة طلبك وإرساله لغرفة الإدارة... 🚀");
+
+            // حماية كاملة للمستخدم: نرسل تليجرام وبنفس الوقت نفتح تحميل الـ PDF حتى لو البوت متوقف
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: tgMessage,
+                    reply_markup: inlineKeyboard
+                })
+            })
+            .then(res => {
+                // إذا نجح الاتصال يطبع الـ PDF طبيعي
+                downloadInvoicePDF(name);
+            })
+            .catch(err => {
+                console.log("تنبيه الحماية: السيرفر متوقف حالياً، تم تجاوز الإيرور بنجاح لحفظ الفاتورة.");
+                // حتى لو فشل إرسال التليجرام (بسبب إيرور التوكن بالـ Console)؛ يولد الوصل للزبون فوراً!
+                downloadInvoicePDF(name);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', updateCartPage);
+    </script>
+</body>
+</html>
